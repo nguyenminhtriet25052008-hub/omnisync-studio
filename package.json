@@ -1,0 +1,45 @@
+{
+  "name": "omnisync-studio",
+  "version": "1.0.0",
+  "description": "Universal Browser-Native Structured Data Converter, Real-Time Synchronizer & Schema Diagnostic Workbench for JSON, YAML, CSV, XML, and TOML",
+  "main": "index.html",
+  "scripts": {
+    "test": "node tests/runner.js",
+    "test:all": "node tests/runner.js && node tests/m2_verification.js && node tests/m3_verification.js",
+    "test:tier1": "node tests/runner.js --tier=1",
+    "test:tier2": "node tests/runner.js --tier=2",
+    "test:tier3": "node tests/runner.js --tier=3",
+    "test:tier4": "node tests/runner.js --tier=4",
+    "test:m1": "node tests/m1_verification.js",
+    "test:m2": "node tests/m2_verification.js",
+    "test:m3": "node tests/m3_verification.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nguyenminhtriet25052008-hub/omnisync-studio.git"
+  },
+  "keywords": [
+    "data-converter",
+    "real-time-sync",
+    "json",
+    "yaml",
+    "csv",
+    "xml",
+    "toml",
+    "rfc6902",
+    "diff-engine",
+    "zero-dependency",
+    "browser-native",
+    "wcag-aaa",
+    "hcmut"
+  ],
+  "author": "Nguyễn Minh Triết (HCMUT)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nguyenminhtriet25052008-hub/omnisync-studio/issues"
+  },
+  "homepage": "https://github.com/nguyenminhtriet25052008-hub/omnisync-studio#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
