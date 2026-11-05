@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>OmniSync Data Studio — Universal E2E Test Dashboard</title>
+  <style>
+    :root {
+      --bg-primary: #0F172A;
+      --bg-surface: #1E293B;
+      --bg-card: #243247;
+      --border-color: #334155;
+      --text-primary: #F8FAFC;
+      --text-secondary: #94A3B8;
+      --text-muted: #64748B;
+      --accent-cyan: #06B6D4;
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --accent-red: #EF4444;
+      --accent-yellow: #F59E0B;
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 14px;
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    }
+
+    [data-theme="light"] {
+      --bg-primary: #F8FAFC;
+      --bg-surface: #FFFFFF;
+      --bg-card: #F1F5F9;
+      --border-color: #E2E8F0;
+      --text-primary: #0F172A;
+      --text-secondary: #475569;
+      --text-muted: #94A3B8;
+      --accent-cyan: #0891B2;
+      --accent-blue: #2563EB;
+      --accent-green: #059669;
+      --accent-red: #DC2626;
+      --accent-yellow: #D97706;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      line-height: 1.5;
+      padding: 24px 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 1080px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Header */
+    .header {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-badge {
+      width: 44px;
+      height: 44px;
+      background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFF;
+      font-weight: 800;
+      font-size: 20px;
+      letter-spacing: -0.5px;
+    }
+
+    .title-group h1 {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .title-group p {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: 1px solid transparent;
+      transition: all 0.15s ease-in-out;
+    }
+
+    .btn-primary {
+      background: var(--accent-blue);
+      color: #FFF;
+    }
+    .btn-primary:hover {
+      opacity: 0.92;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--bg-card);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: var(--border-color);
+    }
+
+    /* Metric Stat Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .stat-value {
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1;
+    }
+
+    .stat-val-total { color: var(--accent-cyan); }
+    .stat-val-passed { color: var(--accent-green); }
+    .stat-val-failed { color: var(--accent-red); }
+    .stat-val-duration { color: var(--accent-yellow); font-size: 22px; }
+
+    /* Progress Bar */
+    .progress-section {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 12px;
+      background: var(--bg-card);
+      border-radius: 6px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-green));
+      border-radius: 6px;
+      transition: width 0.3s ease-in-out;
+    }
+
+    .progress-fill.failed {
+      background: linear-gradient(90deg, var(--accent-yellow), var(--accent-red));
+    }
+
+    /* Filter Toolbar */
+    .toolbar {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 6px;
+    }
+
+    .pill {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .pill:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+
+    .pill.active {
+      background: var(--accent-blue);
+      color: #FFF;
+      border-color: var(--accent-blue);
+    }
+
+    .search-box {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+
+    .search-input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      padding: 7px 12px 7px 32px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      outline: none;
+    }
+    .search-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    /* Test Suites Section */
+    .suites-container {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .suite-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .suite-header {
+      background: var(--bg-card);
+      padding: 12px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .suite-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tier-badge {
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tier-badge-1 { background: rgba(59, 130, 246, 0.15); color: #60A5FA; border: 1px solid rgba(59, 130, 246, 0.3); }
+    .tier-badge-2 { background: rgba(168, 85, 247, 0.15); color: #C084FC; border: 1px solid rgba(168, 85, 247, 0.3); }
+    .tier-badge-3 { background: rgba(234, 179, 8, 0.15); color: #FACC15; border: 1px solid rgba(234, 179, 8, 0.3); }
+    .tier-badge-4 { background: rgba(16, 185, 129, 0.15); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .tier-badge-m2 { background: rgba(6, 182, 212, 0.15); color: #22D3EE; border: 1px solid rgba(6, 182, 212, 0.3); }
+
+    .suite-stats {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .test-list {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .test-item {
+      padding: 10px 18px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-color);
+      font-size: 13px;
+      transition: background 0.1s;
+    }
+    .test-item:last-child {
+      border-bottom: none;
+    }
+    .test-item:hover {
+      background: rgba(255, 255, 255, 0.02);
+    }
+    .test-item.failed {
+      background: rgba(239, 68, 68, 0.05);
+    }
+
+    .test-info {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .test-status-icon {
+      font-size: 14px;
+      line-height: 1.4;
+      flex-shrink: 0;
+    }
+    .status-pass { color: var(--accent-green); }
+    .status-fail { color: var(--accent-red); }
+    .status-pending { color: var(--text-muted); }
+
+    .test-name {
+      color: var(--text-primary);
+      font-family: var(--font-mono);
+      font-size: 12.5px;
+    }
+
+    .test-duration {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      margin-left: 12px;
+      flex-shrink: 0;
+    }
+
+    .error-box {
+      margin-top: 8px;
+      padding: 10px 14px;
+      background: rgba(239, 68, 68, 0.1);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      border-radius: var(--radius-sm);
+      color: #FCA5A5;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 10px;
+      padding-bottom: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .stats-grid { grid-template-columns: repeat(2, 1fr); }
+      .header { flex-direction: column; align-items: flex-start; gap: 14px; }
+      .header-actions { width: 100%; justify-content: space-between; }
+      .toolbar { flex-direction: column; align-items: stretch; }
+      .search-box { max-width: 100%; }
+    }
+  </style>
+
+  <!-- Load Core Parsers in Browser -->
+  <script src="../js/parsers/json.js"></script>
+  <script src="../js/parsers/yaml.js"></script>
+  <script src="../js/parsers/csv.js"></script>
+  <script src="../js/parsers/xml.js"></script>
+  <script src="../js/parsers/toml.js"></script>
+
+  <!-- Load Core Engine in Browser -->
+  <script src="../js/engine/ir.js"></script>
+  <script src="../js/engine/diff.js"></script>
+  <script src="../js/engine/validator.js"></script>
+  <script src="../js/engine/sync.js"></script>
+
+  <!-- Load UI & App Controllers -->
+  <script src="../js/ui.js"></script>
+  <script src="../js/app.js"></script>
+
+  <!-- Load Universal Test Suites -->
+  <script src="./test_suites.js"></script>
+
+  <!-- Load Milestone 2 Verification Suite -->
+  <script src="./m2_verification.js"></script>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-badge">OS</div>
+        <div class="title-group">
+          <h1>OmniSync Data Studio <span style="font-size: 13px; font-weight: normal; color: var(--accent-cyan); background: rgba(6, 182, 212, 0.12); padding: 2px 8px; border-radius: 4px;">E2E Track</span></h1>
+          <p>Universal 4-Tier Interactive Test Suite & Verification Workbench</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggleBtn" class="btn btn-secondary" title="Toggle Dark/Light Mode">
+          🌓 Theme
+        </button>
+        <button id="runAllBtn" class="btn btn-primary">
+          ▶ Run All Tests
+        </button>
+      </div>
+    </header>
+
+    <!-- Metrics Stats Grid -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-label">Total Tests</span>
+        <span id="statTotal" class="stat-value stat-val-total">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Passed</span>
+        <span id="statPassed" class="stat-value stat-val-passed">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Failed</span>
+        <span id="statFailed" class="stat-value stat-val-failed">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Total Duration</span>
+        <span id="statDuration" class="stat-value stat-val-duration">0.0ms</span>
+      </div>
+    </section>
+
+    <!-- Progress Bar Section -->
+    <section class="progress-section">
+      <div class="progress-header">
+        <span id="progressStatus">Ready to execute tests</span>
+        <span id="progressPercent">0%</span>
+      </div>
+      <div class="progress-track">
+        <div id="progressBar" class="progress-fill"></div>
+      </div>
+    </section>
+
+    <!-- Filter Toolbar -->
+    <section class="toolbar">
+      <div class="filter-pills">
+        <button class="pill active" data-tier="all">All Tiers</button>
+        <button class="pill" data-tier="1">Tier 1 (Features)</button>
+        <button class="pill" data-tier="2">Tier 2 (Boundary)</button>
+        <button class="pill" data-tier="3">Tier 3 (Pairs)</button>
+        <button class="pill" data-tier="4">Tier 4 (Workloads)</button>
+        <button class="pill" data-tier="m2">Milestone 2 (UI/UX)</button>
+      </div>
+      <div class="search-box">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" class="search-input" placeholder="Filter tests by name...">
+      </div>
+    </section>
+
+    <!-- Suites Container -->
+    <main id="suitesContainer" class="suites-container"></main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      OmniSync Data Studio • Zero-dependency browser verification • Student: Nguyễn Minh Triết (HCMUT)
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      'use strict';
+
+      // 1. Build In-Browser Engine Context
+      const engine = {
+        parsers: {
+          json: (window.OmniSync && window.OmniSync.parsers && window.OmniSync.parsers.json),
+          yaml: (window.OmniSync && window.OmniSync.parsers && window.OmniSync.parsers.yaml),
+          csv: (window.OmniSync && window.OmniSync.parsers && window.OmniSync.parsers.csv),
+          xml: (window.OmniSync && window.OmniSync.parsers && window.OmniSync.parsers.xml) || window.XMLParser,
+          toml: (window.OmniSync && window.OmniSync.parsers && window.OmniSync.parsers.toml) || window.TOMLParser
+        },
+        SyncEngine: (window.OmniSync && window.OmniSync.SyncEngine) || window.SyncEngine,
+        IR: (window.OmniSync && window.OmniSync.IR) || window.IR,
+        Diff: (window.OmniSync && window.OmniSync.Diff) || window.Diff,
+        Validator: (window.OmniSync && window.OmniSync.Validator) || window.Validator,
+        UI: (window.OmniSync && window.OmniSync.UI) || window.UI,
+        App: (window.OmniSync && window.OmniSync.App) || window.App
+      };
+
+      // 2. Build In-Browser Assertion Library
+      const assert = {
+        ok: function (value, message) {
+          if (!value) throw new Error(message || `Assertion failed: expected truthy value, but received: ${value}`);
+        },
+        strictEqual: function (actual, expected, message) {
+          if (actual !== expected) {
+            throw new Error(message || `Assertion failed: actual (${JSON.stringify(actual)}) !== expected (${JSON.stringify(expected)})`);
+          }
+        },
+        notStrictEqual: function (actual, expected, message) {
+          if (actual === expected) {
+            throw new Error(message || `Assertion failed: actual === expected (${JSON.stringify(actual)})`);
+          }
+        },
+        deepStrictEqual: function (actual, expected, message) {
+          if (engine.IR && typeof engine.IR.deepEquals === 'function' && engine.IR.deepEquals(actual, expected)) {
+            return;
+          }
+          if (JSON.stringify(actual) !== JSON.stringify(expected)) {
+            throw new Error(message || `Assertion failed: deep equality mismatch.\nActual:   ${JSON.stringify(actual)}\nExpected: ${JSON.stringify(expected)}`);
+          }
+        },
+        match: function (string, regex, message) {
+          if (!regex.test(string)) {
+            throw new Error(message || `Assertion failed: "${string}" does not match pattern ${regex}`);
+          }
+        },
+        throws: function (fn, expectedErr, message) {
+          let threw = false;
+          let actualErr = null;
+          try {
+            fn();
+          } catch (e) {
+            threw = true;
+            actualErr = e;
+          }
+          if (!threw) {
+            throw new Error(message || 'Expected function to throw, but it executed without error.');
+          }
+          if (expectedErr instanceof RegExp && !expectedErr.test(actualErr.message)) {
+            throw new Error(`Expected error message "${actualErr.message}" to match ${expectedErr}`);
+          }
+        }
+      };
+
+      // 3. UI State & References
+      const testSuites = window.TEST_SUITES || (window.OmniSync && window.OmniSync.TEST_SUITES) || [];
+      let currentTierFilter = 'all';
+      let currentSearchQuery = '';
+
+      const dom = {
+        themeToggleBtn: document.getElementById('themeToggleBtn'),
+        runAllBtn: document.getElementById('runAllBtn'),
+        statTotal: document.getElementById('statTotal'),
+        statPassed: document.getElementById('statPassed'),
+        statFailed: document.getElementById('statFailed'),
+        statDuration: document.getElementById('statDuration'),
+        progressStatus: document.getElementById('progressStatus'),
+        progressPercent: document.getElementById('progressPercent'),
+        progressBar: document.getElementById('progressBar'),
+        searchInput: document.getElementById('searchInput'),
+        suitesContainer: document.getElementById('suitesContainer'),
+        pills: document.querySelectorAll('.filter-pills .pill')
+      };
+
+      // Theme Toggle Handler
+      dom.themeToggleBtn.addEventListener('click', function () {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const nextTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', nextTheme);
+      });
+
+      // Filter Pills Handler
+      dom.pills.forEach(pill => {
+        pill.addEventListener('click', function () {
+          dom.pills.forEach(p => p.classList.remove('active'));
+          this.classList.add('active');
+          currentTierFilter = this.getAttribute('data-tier');
+          filterSuites();
+        });
+      });
+
+      // Search Handler
+      dom.searchInput.addEventListener('input', function (e) {
+        currentSearchQuery = e.target.value.toLowerCase().trim();
+        filterSuites();
+      });
+
+      function filterSuites() {
+        const suiteCards = document.querySelectorAll('.suite-card');
+        suiteCards.forEach(card => {
+          const tier = card.getAttribute('data-tier');
+          const matchesTier = (currentTierFilter === 'all' || currentTierFilter === tier);
+
+          let hasVisibleTests = false;
+          const testItems = card.querySelectorAll('.test-item');
+          testItems.forEach(item => {
+            const name = item.getAttribute('data-name').toLowerCase();
+            const matchesSearch = !currentSearchQuery || name.includes(currentSearchQuery);
+            if (matchesSearch) {
+              item.style.display = 'flex';
+              hasVisibleTests = true;
+            } else {
+              item.style.display = 'none';
+            }
+          });
+
+          if (matchesTier && hasVisibleTests) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      }
+
+      // Render Skeleton UI
+      function renderSuites() {
+        dom.suitesContainer.innerHTML = '';
+        let total = 0;
+
+        testSuites.forEach((suite, sIdx) => {
+          const card = document.createElement('div');
+          card.className = 'suite-card';
+          card.setAttribute('data-tier', String(suite.tier));
+
+          const header = document.createElement('div');
+          header.className = 'suite-header';
+
+          const title = document.createElement('div');
+          title.className = 'suite-title';
+          const tierLabel = suite.tier === 'm2' ? 'M2' : `Tier ${suite.tier}`;
+          title.innerHTML = `<span class="tier-badge tier-badge-${suite.tier}">${tierLabel}</span> ${suite.name}`;
+
+          const stats = document.createElement('div');
+          stats.className = 'suite-stats';
+          stats.id = `suiteStats_${sIdx}`;
+          stats.textContent = `${suite.tests.length} tests`;
+
+          header.appendChild(title);
+          header.appendChild(stats);
+
+          const list = document.createElement('div');
+          list.className = 'test-list';
+          list.id = `suiteList_${sIdx}`;
+
+          suite.tests.forEach((t, tIdx) => {
+            total++;
+            const item = document.createElement('div');
+            item.className = 'test-item';
+            item.id = `testItem_${sIdx}_${tIdx}`;
+            item.setAttribute('data-name', t.name);
+
+            const info = document.createElement('div');
+            info.className = 'test-info';
+
+            const icon = document.createElement('span');
+            icon.className = 'test-status-icon status-pending';
+            icon.id = `testIcon_${sIdx}_${tIdx}`;
+            icon.textContent = '○';
+
+            const nameGroup = document.createElement('div');
+            nameGroup.style.display = 'flex';
+            nameGroup.style.flexDirection = 'column';
+            nameGroup.style.gap = '4px';
+
+            const name = document.createElement('span');
+            name.className = 'test-name';
+            name.textContent = t.name;
+
+            nameGroup.appendChild(name);
+            info.appendChild(icon);
+            info.appendChild(nameGroup);
+
+            const dur = document.createElement('span');
+            dur.className = 'test-duration';
+            dur.id = `testDuration_${sIdx}_${tIdx}`;
+            dur.textContent = '-';
+
+            item.appendChild(info);
+            item.appendChild(dur);
+            list.appendChild(item);
+          });
+
+          card.appendChild(header);
+          card.appendChild(list);
+          dom.suitesContainer.appendChild(card);
+        });
+
+        dom.statTotal.textContent = String(total);
+      }
+
+      // Execute Test Run
+      async function runTests() {
+        dom.runAllBtn.disabled = true;
+        dom.runAllBtn.textContent = '⏳ Running...';
+
+        let passed = 0;
+        let failed = 0;
+        let executed = 0;
+        let total = 0;
+        testSuites.forEach(s => total += s.tests.length);
+
+        const startTime = performance.now();
+
+        for (let sIdx = 0; sIdx < testSuites.length; sIdx++) {
+          const suite = testSuites[sIdx];
+          let suitePassed = 0;
+          let suiteFailed = 0;
+
+          for (let tIdx = 0; tIdx < suite.tests.length; tIdx++) {
+            const t = suite.tests[tIdx];
+            const itemEl = document.getElementById(`testItem_${sIdx}_${tIdx}`);
+            const iconEl = document.getElementById(`testIcon_${sIdx}_${tIdx}`);
+            const durEl = document.getElementById(`testDuration_${sIdx}_${tIdx}`);
+
+            const tStart = performance.now();
+            try {
+              t.run(assert, engine);
+              const tDur = performance.now() - tStart;
+              passed++;
+              suitePassed++;
+              iconEl.className = 'test-status-icon status-pass';
+              iconEl.textContent = '✔';
+              durEl.textContent = `${tDur.toFixed(2)}ms`;
+            } catch (err) {
+              const tDur = performance.now() - tStart;
+              failed++;
+              suiteFailed++;
+              itemEl.classList.add('failed');
+              iconEl.className = 'test-status-icon status-fail';
+              iconEl.textContent = '✖';
+              durEl.textContent = `${tDur.toFixed(2)}ms`;
+
+              const errorBox = document.createElement('div');
+              errorBox.className = 'error-box';
+              errorBox.textContent = err.stack || err.message;
+              itemEl.querySelector('.test-info > div').appendChild(errorBox);
+            }
+
+            executed++;
+            const pct = Math.round((executed / total) * 100);
+            dom.progressBar.style.width = `${pct}%`;
+            dom.progressPercent.textContent = `${pct}%`;
+            dom.progressStatus.textContent = `Running: ${t.name.slice(0, 50)}...`;
+
+            if (failed > 0) {
+              dom.progressBar.classList.add('failed');
+            }
+
+            dom.statPassed.textContent = String(passed);
+            dom.statFailed.textContent = String(failed);
+            dom.statDuration.textContent = `${(performance.now() - startTime).toFixed(1)}ms`;
+
+            // Give browser time to repaint
+            if (executed % 5 === 0) {
+              await new Promise(r => setTimeout(r, 0));
+            }
+          }
+
+          const suiteStatsEl = document.getElementById(`suiteStats_${sIdx}`);
+          suiteStatsEl.textContent = `${suitePassed}/${suite.tests.length} passed${suiteFailed > 0 ? ` (${suiteFailed} failed)` : ''}`;
+          if (suiteFailed > 0) {
+            suiteStatsEl.style.color = 'var(--accent-red)';
+          } else {
+            suiteStatsEl.style.color = 'var(--accent-green)';
+          }
+        }
+
+        const totalTime = performance.now() - startTime;
+        dom.statDuration.textContent = `${totalTime.toFixed(1)}ms`;
+        dom.progressStatus.textContent = failed === 0 ? `All ${total} tests passed successfully!` : `Completed with ${failed} failure(s)`;
+        dom.runAllBtn.disabled = false;
+        dom.runAllBtn.textContent = '▶ Re-run All Tests';
+      }
+
+      // Initialize
+      renderSuites();
+      dom.runAllBtn.addEventListener('click', runTests);
+
+      // Auto-run on load
+      setTimeout(runTests, 200);
+    })();
+  </script>
+  <!-- Hidden Sandboxed DOM for Milestone 2 UI/UX Verification Execution in Browser -->
+  <div id="m2Sandbox" style="display: none;" aria-hidden="true"></div>
+</body>
+</html>
