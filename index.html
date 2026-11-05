@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OmniSync Data Studio — Browser-native bidirectional structured data converter, real-time synchronizer, and schema diagnostic workbench for JSON, YAML, CSV, XML, and TOML.">
+  <meta name="theme-color" content="#0F172A">
+  <title>OmniSync Data Studio — Bidirectional Structured Data Converter & Real-Time Sync</title>
+  
+  <!-- Favicon / Brand Icon -->
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/syntax.css">
+</head>
+<body>
+  <!-- ==========================================================================
+       Embedded SVG Sprite Definitions
+       Inlined to guarantee 100% CORS-free rendering under file:// and HTTP/HTTPS
+       ========================================================================== -->
+  <svg xmlns="http://www.w3.org/2000/svg" style="display: none;" aria-hidden="true">
+    <defs>
+      <!-- 1. Swap Direction (⇄) -->
+      <symbol id="icon-swap" viewBox="0 0 24 24">
+        <path d="M16 3l4 4-4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M20 7H4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M8 21l-4-4 4-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 17h16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 2. Copy to Clipboard -->
+      <symbol id="icon-copy" viewBox="0 0 24 24">
+        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/>
+        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+
+      <!-- 3. Checkmark (Success State) -->
+      <symbol id="icon-check" viewBox="0 0 24 24">
+        <polyline points="20 6 9 17 4 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- 4. Download / Export -->
+      <symbol id="icon-download" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <polyline points="7 10 12 15 17 10" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="15" x2="12" y2="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 5. Upload File -->
+      <symbol id="icon-upload" viewBox="0 0 24 24">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <polyline points="17 8 12 3 7 8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="3" x2="12" y2="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 6. Trash / Clear -->
+      <symbol id="icon-trash" viewBox="0 0 24 24">
+        <polyline points="3 6 5 6 21 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="10" y1="11" x2="10" y2="17" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="14" y1="11" x2="14" y2="17" fill="none" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+
+      <!-- 7. Format / Prettify Magic -->
+      <symbol id="icon-magic" viewBox="0 0 24 24">
+        <path d="M14 4l1 3 3 1-3 1-1 3-1-3-3-1 3-1 1-3z" fill="currentColor"/>
+        <path d="M5 9l.75 2.25L8 12l-2.25.75L5 15l-.75-2.25L2 12l2.25-.75L5 9z" fill="currentColor"/>
+        <line x1="9" y1="15" x2="19" y2="5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 8. Minify / Compact -->
+      <symbol id="icon-minify" viewBox="0 0 24 24">
+        <polyline points="4 14 10 14 10 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <polyline points="20 10 14 10 14 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="14" y1="10" x2="21" y2="3" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="3" y1="21" x2="10" y2="14" fill="none" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+
+      <!-- 9. Theme Sun (Light Mode) -->
+      <symbol id="icon-sun" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="5" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="12" y1="1" x2="12" y2="3" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="21" x2="12" y2="23" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="1" y1="12" x2="3" y2="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="21" y1="12" x2="23" y2="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 10. Theme Moon (Dark Mode) -->
+      <symbol id="icon-moon" viewBox="0 0 24 24">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- 11. Diff Inspection -->
+      <symbol id="icon-diff" viewBox="0 0 24 24">
+        <line x1="12" y1="3" x2="12" y2="21" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <path d="M8 8H4m2-2v4" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="16" y1="16" x2="20" y2="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 12. Alert Triangle (Error Banner) -->
+      <symbol id="icon-alert-triangle" viewBox="0 0 24 24">
+        <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="12" y1="9" x2="12" y2="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="12" y1="17" x2="12.01" y2="17" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 13. Close / Dismiss (X) -->
+      <symbol id="icon-x" viewBox="0 0 24 24">
+        <line x1="18" y1="6" x2="6" y2="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="6" y1="6" x2="18" y2="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 14. Chevron Right -->
+      <symbol id="icon-chevron-right" viewBox="0 0 24 24">
+        <polyline points="9 18 15 12 9 6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- 15. Chevron Down -->
+      <symbol id="icon-chevron-down" viewBox="0 0 24 24">
+        <polyline points="6 9 12 15 18 9" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- 16. Keyboard Shortcuts -->
+      <symbol id="icon-keyboard" viewBox="0 0 24 24">
+        <rect x="2" y="4" width="20" height="16" rx="2" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="6" y1="8" x2="6.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="10" y1="8" x2="10.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="14" y1="8" x2="14.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18" y1="8" x2="18.01" y2="8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="6" y1="12" x2="6.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="18" y1="12" x2="18.01" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="7" y1="16" x2="17" y2="16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </symbol>
+
+      <!-- 17. GitHub Octocat -->
+      <symbol id="icon-github" viewBox="0 0 24 24">
+        <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </symbol>
+
+      <!-- 18. Info Circle -->
+      <symbol id="icon-info" viewBox="0 0 24 24">
+        <circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="12" y1="16" x2="12" y2="12" fill="none" stroke="currentColor" stroke-width="2"/>
+        <line x1="12" y1="8" x2="12.01" y2="8" stroke="currentColor" stroke-width="2"/>
+      </symbol>
+    </defs>
+  </svg>
+
+  <!-- Accessibility Skip Navigation -->
+  <a href="#mainWorkbench" class="skip-link">Skip to editor workbench</a>
+
+  <!-- App Header & Global Action Chrome (54px) -->
+  <header class="app-header" id="appHeader" role="banner">
+    <div class="header-left">
+      <div class="brand">
+        <img src="assets/logo.svg" alt="" class="brand-logo" width="30" height="30" aria-hidden="true">
+        <span class="brand-title">OmniSync <span class="brand-accent">Studio</span></span>
+        <span class="badge badge-version" title="Version 1.0.0">v1.0.0</span>
+      </div>
+    </div>
+
+    <div class="header-center">
+      <!-- Preset Sample Loader -->
+      <div class="preset-wrapper">
+        <label for="presetSelect" class="sr-only">Load Sample Preset</label>
+        <select id="presetSelect" class="select-preset" aria-label="Load Sample Preset">
+          <option value="" disabled selected>📂 Load Sample Data...</option>
+          <option value="sensor_metrics">IoT Sensor Fleet Telemetry (JSON ⇄ YAML)</option>
+          <option value="users_table">Users &amp; Roles Table (CSV ⇄ JSON)</option>
+          <option value="cloud_config">Cloud Infrastructure Config (YAML ⇄ TOML)</option>
+          <option value="university_catalog">University Catalog (XML ⇄ JSON)</option>
+        </select>
+      </div>
+
+      <!-- Quick Swap Direction Button (Alt+S) -->
+      <button id="swapBtn" class="btn btn-secondary btn-swap" title="Swap Direction (Alt+S)" aria-label="Swap Conversion Direction (Alt+S)">
+        <svg class="icon" aria-hidden="true"><use href="#icon-swap"></use></svg>
+        <span class="btn-text">Swap</span>
+        <kbd class="kbd-badge">Alt+S</kbd>
+      </button>
+
+      <!-- Engine Configuration Toggles -->
+      <div class="header-toggles">
+        <label class="toggle-control" title="Enable/Disable Real-time Keystroke Synchronization">
+          <input type="checkbox" id="autoSyncToggle" checked aria-label="Real-time Keystroke Synchronization">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">Auto-Sync</span>
+        </label>
+
+        <label class="toggle-control" title="Synchronize Proportional Scrolling between Left and Right Panes">
+          <input type="checkbox" id="syncScrollToggle" checked aria-label="Synchronized Scrolling">
+          <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          <span class="toggle-text">Sync Scroll</span>
+        </label>
+      </div>
+    </div>
+
+    <div class="header-right">
+      <!-- Diff Visualizer Trigger -->
+      <button id="diffSummaryPill" class="btn btn-ghost btn-icon-text" title="Inspect Tree Diff & JSON Patch (RFC 6902)" aria-label="Toggle Diff Inspection">
+        <svg class="icon" aria-hidden="true"><use href="#icon-diff"></use></svg>
+        <span id="diffSummaryText" class="btn-text">Diff</span>
+      </button>
+
+      <!-- Theme Switcher -->
+      <button id="themeToggle" class="btn btn-ghost btn-icon" title="Toggle OLED Dark / Crisp Light Theme" aria-label="Toggle Theme">
+        <svg class="icon icon-theme-sun" aria-hidden="true"><use href="#icon-sun"></use></svg>
+        <svg class="icon icon-theme-moon" aria-hidden="true"><use href="#icon-moon"></use></svg>
+      </button>
+
+      <!-- Keyboard Shortcuts Modal Trigger -->
+      <button id="shortcutsBtn" class="btn btn-ghost btn-icon" title="Keyboard Shortcuts (? or F1)" aria-label="Keyboard Shortcuts">
+        <svg class="icon" aria-hidden="true"><use href="#icon-keyboard"></use></svg>
+      </button>
+
+      <!-- GitHub Repository Link -->
+      <a href="https://github.com/nguyenminhtriet25052008-hub/omnisync-studio" target="_blank" rel="noopener noreferrer" class="btn btn-ghost btn-icon" title="Open GitHub Repository" aria-label="GitHub Repository">
+        <svg class="icon" aria-hidden="true"><use href="#icon-github"></use></svg>
+      </a>
+    </div>
+  </header>
+
+  <!-- Mobile Tab Switcher (Visible on viewports < 768px) -->
+  <nav class="mobile-tabs" role="tablist" aria-label="Editor Panes Selector">
+    <button id="tabLeftPane" class="mobile-tab-btn active" role="tab" aria-selected="true" aria-controls="leftPane">
+      Source Pane (<span id="mobileLeftFormatLabel">JSON</span>)
+    </button>
+    <button id="tabRightPane" class="mobile-tab-btn" role="tab" aria-selected="false" aria-controls="rightPane">
+      Target Pane (<span id="mobileRightFormatLabel">YAML</span>)
+    </button>
+  </nav>
+
+  <!-- Main Dual-Pane Workbench -->
+  <main id="mainWorkbench" class="workbench-main" role="main">
+    <div class="split-layout">
+
+      <!-- ================= LEFT PANE (Source / Input) ================= -->
+      <section id="leftPane" class="editor-pane source-pane active-tab" aria-label="Source Editor Workspace">
+        <!-- Pane Toolbar -->
+        <div class="pane-toolbar">
+          <div class="toolbar-cluster-left">
+            <label for="leftFormat" class="sr-only">Source Data Format</label>
+            <select id="leftFormat" class="select-format" aria-label="Source Data Format">
+              <option value="json" selected>JSON</option>
+              <option value="yaml">YAML</option>
+              <option value="csv">CSV</option>
+              <option value="xml">XML</option>
+              <option value="toml">TOML</option>
+            </select>
+            <div id="leftStats" class="stats-pill" aria-live="polite" title="Document size and line count">0 bytes | 0 lines</div>
+          </div>
+
+          <div class="toolbar-cluster-right">
+            <!-- File Upload -->
+            <button id="leftUploadBtn" class="btn btn-tool" title="Upload Local File" aria-label="Upload File to Source Pane">
+              <svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+              <span>Upload</span>
+              <input type="file" id="leftFileInput" class="sr-only" accept=".json,.yaml,.yml,.csv,.xml,.toml,.txt" tabindex="-1">
+            </button>
+
+            <!-- Prettify / Format -->
+            <button id="leftPrettifyBtn" class="btn btn-tool" title="Format / Prettify Content (Ctrl+Shift+F)" aria-label="Prettify Source Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-magic"></use></svg>
+              <span>Format</span>
+            </button>
+
+            <!-- Copy -->
+            <button id="leftCopyBtn" class="btn btn-tool" title="Copy to Clipboard" aria-label="Copy Source Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+
+            <!-- File Download -->
+            <button id="leftDownloadBtn" class="btn btn-tool" title="Download Source File" aria-label="Download Source Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>Export</span>
+            </button>
+
+            <!-- Soft Clear -->
+            <button id="leftClearBtn" class="btn btn-tool btn-danger-soft" title="Clear Content (Undo Available)" aria-label="Clear Source Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg>
+              <span>Clear</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Body (Gutter + Textarea + Drag Overlay) -->
+        <div class="editor-container" id="leftEditorContainer">
+          <div class="editor-gutter" id="leftGutter" aria-hidden="true">
+            <div class="gutter-num active">1</div>
+          </div>
+          <textarea id="leftEditor" class="editor-textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Source code editor canvas" placeholder="Paste or type structured data here, or drag & drop a file..."></textarea>
+          
+          <!-- Drag & Drop Dropzone Overlay -->
+          <div class="drag-overlay" id="leftDropzone" aria-hidden="true">
+            <div class="drag-overlay-box">
+              <svg class="icon-hero" aria-hidden="true"><use href="#icon-upload"></use></svg>
+              <p class="drag-title">Drop file to load into Source</p>
+              <p class="drag-subtitle">Supports JSON, YAML, CSV, XML, TOML</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Center Split Divider & Manual Sync Trigger -->
+      <div class="split-divider" aria-hidden="true">
+        <button id="btnCenterSync" class="btn-sync-action" title="Manual Synchronize (Ctrl+Enter)" aria-label="Manual Synchronize">
+          <svg class="icon" aria-hidden="true"><use href="#icon-swap"></use></svg>
+        </button>
+      </div>
+
+      <!-- ================= RIGHT PANE (Target / Output) ================= -->
+      <section id="rightPane" class="editor-pane target-pane" aria-label="Target Editor Workspace">
+        <!-- Pane Toolbar -->
+        <div class="pane-toolbar">
+          <div class="toolbar-cluster-left">
+            <label for="rightFormat" class="sr-only">Target Data Format</label>
+            <select id="rightFormat" class="select-format" aria-label="Target Data Format">
+              <option value="json">JSON</option>
+              <option value="yaml" selected>YAML</option>
+              <option value="csv">CSV</option>
+              <option value="xml">XML</option>
+              <option value="toml">TOML</option>
+            </select>
+            <div id="rightStats" class="stats-pill" aria-live="polite" title="Document size and line count">0 bytes | 0 lines</div>
+          </div>
+
+          <div class="toolbar-cluster-right">
+            <!-- File Upload (Bidirectional Input) -->
+            <button id="rightUploadBtn" class="btn btn-tool" title="Upload Local File" aria-label="Upload File to Target Pane">
+              <svg class="icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+              <span>Upload</span>
+              <input type="file" id="rightFileInput" class="sr-only" accept=".json,.yaml,.yml,.csv,.xml,.toml,.txt" tabindex="-1">
+            </button>
+
+            <!-- Prettify -->
+            <button id="rightPrettifyBtn" class="btn btn-tool" title="Format / Prettify Content" aria-label="Prettify Target Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-magic"></use></svg>
+              <span>Format</span>
+            </button>
+
+            <!-- Quick Copy -->
+            <button id="rightCopyBtn" class="btn btn-tool btn-copy-primary" title="Quick Copy Output (Ctrl+Shift+C)" aria-label="Copy Target Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+              <span>Copy</span>
+            </button>
+
+            <!-- File Download / Export -->
+            <button id="rightDownloadBtn" class="btn btn-tool btn-accent-export" title="Export File with verified MIME type" aria-label="Download Converted File">
+              <svg class="icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+              <span>Export</span>
+            </button>
+
+            <!-- Soft Clear -->
+            <button id="rightClearBtn" class="btn btn-tool btn-danger-soft" title="Clear Content (Undo Available)" aria-label="Clear Target Content">
+              <svg class="icon" aria-hidden="true"><use href="#icon-trash"></use></svg>
+              <span>Clear</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Editor Body (Gutter + Textarea + Drag Overlay) -->
+        <div class="editor-container" id="rightEditorContainer">
+          <div class="editor-gutter" id="rightGutter" aria-hidden="true">
+            <div class="gutter-num active">1</div>
+          </div>
+          <textarea id="rightEditor" class="editor-textarea" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" aria-label="Target code editor canvas" placeholder="Synchronized converted data appears here, or edit directly for bidirectional synchronization..."></textarea>
+
+          <!-- Drag & Drop Dropzone Overlay -->
+          <div class="drag-overlay" id="rightDropzone" aria-hidden="true">
+            <div class="drag-overlay-box">
+              <svg class="icon-hero" aria-hidden="true"><use href="#icon-upload"></use></svg>
+              <p class="drag-title">Drop file to load into Target</p>
+              <p class="drag-subtitle">Supports JSON, YAML, CSV, XML, TOML</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div><!-- /.split-layout -->
+
+    <!-- Diagnostic Error Banner (Clickable Line/Col Navigation & Caret Snippet) -->
+    <div id="errorBanner" class="diagnostic-banner hidden" role="alert" aria-live="assertive">
+      <div class="banner-icon-container" aria-hidden="true">
+        <svg class="icon-banner"><use href="#icon-alert-triangle"></use></svg>
+      </div>
+      <div class="banner-content">
+        <div class="banner-header-row">
+          <div class="banner-meta">
+            <span class="badge badge-error">Syntax Error</span>
+            <span id="errorPaneBadge" class="badge badge-pane">Source Editor</span>
+            <span id="errorCoordsText" class="coords-indicator">Line 1, Column 1</span>
+          </div>
+          <div class="banner-buttons">
+            <button id="errorJumpBtn" class="btn btn-sm btn-jump-anchor" type="button" aria-label="Jump to error coordinate in editor">
+              <span>Jump to Error</span>
+              <svg class="icon-xs" aria-hidden="true"><use href="#icon-chevron-right"></use></svg>
+            </button>
+            <button id="errorDismissBtn" class="btn-dismiss btn-banner-dismiss" type="button" aria-label="Dismiss error banner">
+              <svg class="icon-xs" aria-hidden="true"><use href="#icon-x"></use></svg>
+            </button>
+          </div>
+        </div>
+        <div id="errorMessageText" class="banner-message">SyntaxError: Unexpected token</div>
+        <div id="errorCodeFrameContainer" class="code-frame-wrapper">
+          <pre class="code-frame-pre"><code id="errorCodeFrameSnippet" class="code-frame-code"></code></pre>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- RFC 6902 Diff Visualizer Modal Dialog -->
+  <div id="diffModal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="diffModalTitle">
+    <div class="modal-window modal-lg" tabindex="-1">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <svg class="icon" aria-hidden="true"><use href="#icon-diff"></use></svg>
+          <h2 id="diffModalTitle" class="modal-title">Tree Diff &amp; RFC 6902 Patch Inspection</h2>
+        </div>
+        <div class="modal-header-actions">
+          <span id="diffModalSummaryBadge" class="badge badge-version">0 changes</span>
+          <button id="diffModalCloseBtn" class="btn-icon" type="button" aria-label="Close diff modal">
+            <svg class="icon" aria-hidden="true"><use href="#icon-x"></use></svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-toolbar">
+        <div class="diff-filter-tabs" role="tablist" aria-label="Filter diff operations">
+          <button class="diff-tab active" data-filter="all" role="tab" aria-selected="true">
+            All (<span id="diffCountAll">0</span>)
+          </button>
+          <button class="diff-tab tab-add" data-filter="add" role="tab" aria-selected="false">
+            + Added (<span id="diffCountAdd">0</span>)
+          </button>
+          <button class="diff-tab tab-remove" data-filter="remove" role="tab" aria-selected="false">
+            - Removed (<span id="diffCountRemove">0</span>)
+          </button>
+          <button class="diff-tab tab-replace" data-filter="replace" role="tab" aria-selected="false">
+            ~ Modified (<span id="diffCountReplace">0</span>)
+          </button>
+        </div>
+
+        <div class="diff-view-mode-group">
+          <button id="diffViewCardsBtn" class="btn-toggle active" type="button" title="Structured cards">Cards</button>
+          <button id="diffViewRawBtn" class="btn-toggle" type="button" title="Raw RFC 6902 JSON array">Raw Patch</button>
+          <button id="diffCopyPatchBtn" class="btn btn-sm btn-tool" type="button" aria-label="Copy JSON patch to clipboard">
+            <svg class="icon" aria-hidden="true"><use href="#icon-copy"></use></svg>
+            <span>Copy Patch</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="modal-body" id="diffModalBody">
+        <!-- Structured Card View -->
+        <div id="diffPatchCardList" class="diff-card-list">
+          <div class="diff-empty-state">
+            <svg class="icon-hero" aria-hidden="true"><use href="#icon-check"></use></svg>
+            <h3>Datasets are Structurally Identical</h3>
+            <p>Zero RFC 6902 patch operations detected between left and right data states.</p>
+          </div>
+        </div>
+
+        <!-- Raw JSON Patch View -->
+        <div id="diffPatchRawView" class="diff-raw-view hidden">
+          <pre class="raw-patch-pre"><code id="diffRawJsonBlock">[]</code></pre>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <div class="diff-standard-tag">RFC 6902 Compliant • JSON Pointer RFC 6901</div>
+        <button id="diffModalDismissBtn" class="btn btn-secondary" type="button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Live Status Bar (28px) -->
+  <footer id="statusBar" class="app-statusbar" role="status" aria-live="polite">
+    <div class="statusbar-left">
+      <!-- Sync Status Badge -->
+      <div id="statusBadge" class="status-badge status-synced">
+        <span class="status-pulse-dot" aria-hidden="true"></span>
+        <span id="statusText">Synced</span>
+      </div>
+      <!-- Processing Latency -->
+      <span id="latencyPill" class="status-metric" title="Conversion calculation latency">0.0 ms</span>
+      <!-- Character Encoding -->
+      <span class="status-encoding">UTF-8</span>
+    </div>
+
+    <div class="statusbar-center">
+      <span id="statusBarMessage" class="status-bidirectional-hint">Active Flow: Left ⇄ Right</span>
+    </div>
+
+    <div class="statusbar-right">
+      <span class="status-shortcuts-tip">Ctrl+Enter: Sync | Alt+S: Swap | Ctrl+Shift+C: Copy</span>
+    </div>
+  </footer>
+
+  <!-- Floating Toast Notifications Container -->
+  <div id="toastContainer" class="toast-stack" role="region" aria-label="Notifications" aria-live="polite" aria-atomic="true"></div>
+
+  <!-- Soft Clear Undo Snackbar -->
+  <div id="undoSnackbar" class="undo-snackbar hidden" role="status" aria-live="assertive">
+    <div class="undo-snackbar-content">
+      <span id="undoMessage" class="undo-text">Content cleared</span>
+      <button id="undoSnackbarBtn" class="btn btn-undo-trigger" aria-label="Undo content clearing">
+        Undo <span class="undo-countdown-hint">(5s)</span>
+      </button>
+      <button id="btnDismissUndo" class="btn-undo-dismiss" aria-label="Dismiss undo message">
+        <svg class="icon-xs" aria-hidden="true"><use href="#icon-x"></use></svg>
+      </button>
+    </div>
+    <div class="undo-progress-track">
+      <div id="undoProgressBar" class="undo-progress-fill"></div>
+    </div>
+  </div>
+
+  <!-- Accessible Keyboard Shortcuts Dialog -->
+  <dialog id="shortcutsModal" class="shortcuts-dialog" aria-labelledby="shortcutsHeading">
+    <div class="dialog-content">
+      <div class="dialog-header">
+        <h2 id="shortcutsHeading" class="dialog-title">Keyboard Shortcuts</h2>
+        <button id="btnCloseShortcuts" class="btn-dialog-close" aria-label="Close shortcuts dialog">
+          <svg class="icon-sm" aria-hidden="true"><use href="#icon-x"></use></svg>
+        </button>
+      </div>
+      <div class="dialog-body">
+        <table class="shortcuts-table">
+          <thead>
+            <tr>
+              <th scope="col">Action</th>
+              <th scope="col">Shortcut</th>
+              <th scope="col">Scope</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Manual Synchronize / Convert</td>
+              <td><kbd>Ctrl</kbd> + <kbd>Enter</kbd></td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Swap Conversion Direction</td>
+              <td><kbd>Alt</kbd> + <kbd>S</kbd></td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Quick Copy Output to Clipboard</td>
+              <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>C</kbd></td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Format / Prettify Active Code</td>
+              <td><kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F</kbd></td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Undo Content Soft-Clear</td>
+              <td><kbd>Ctrl</kbd> + <kbd>Z</kbd> (when snackbar visible)</td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Dismiss Modals &amp; Error Banners</td>
+              <td><kbd>Escape</kbd></td>
+              <td>Global</td>
+            </tr>
+            <tr>
+              <td>Show Shortcuts Dialog</td>
+              <td><kbd>F1</kbd> or <kbd>?</kbd></td>
+              <td>Global</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- ================= Scripts (Dependency Loading Order) ================= -->
+  <!-- 1. Engine & IR Core -->
+  <script src="js/engine/ir.js"></script>
+  <script src="js/engine/diff.js"></script>
+  <script src="js/engine/validator.js"></script>
+  <!-- 2. Parsers & Serializers -->
+  <script src="js/parsers/json.js"></script>
+  <script src="js/parsers/yaml.js"></script>
+  <script src="js/parsers/csv.js"></script>
+  <script src="js/parsers/xml.js"></script>
+  <script src="js/parsers/toml.js"></script>
+  <!-- 3. Bidirectional Sync Coordinator -->
+  <script src="js/engine/sync.js"></script>
+  <!-- 4. UI Module & Interaction Layer -->
+  <script src="js/ui.js"></script>
+  <!-- 5. Application Entry Controller -->
+  <script src="js/app.js"></script>
+</body>
+</html>
