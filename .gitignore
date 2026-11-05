@@ -1,0 +1,44 @@
+# Dependencies & Package Managers
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Operating System Files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Temporary & Cache Files
+*.tmp
+*.temp
+*.log
+*.swp
+*.swo
+*~
+.cache/
+
+# IDE & Text Editor Configuration
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+.project
+.settings/
+
+# Test & Coverage Outputs
+coverage/
+.nyc_output/
+*.lcov
+
+# Build & Scratch Artifacts
+dist/
+build/
+bundle/
+*.zip
+*.tar.gz
